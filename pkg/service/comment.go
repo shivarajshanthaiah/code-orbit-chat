@@ -50,10 +50,42 @@ func (ch *ChatService) ReplyToCommentService(ctx context.Context, req *pb.ReplyR
 	return &pb.CommentResponse{
 		Message: "Reply added successfully",
 		Comment: &pb.Comment{
-			Id: reply.ID,
-			UserId: reply.UserID,
-			Content: reply.Content,
+			Id:              reply.ID,
+			UserId:          reply.UserID,
+			Content:         reply.Content,
 			ParentCommentId: reply.ParentCommentID,
 		},
 	}, nil
+}
+
+func (ch *ChatService) GetCommentsForProblemService(ctx context.Context, req *pb.FetchCommentsRequest) (*pb.FetchCommentsResponse, error) {
+	comments, err := ch.Repo.GetCommentsByProblemID(ctx, int(req.ProblemId))
+	if err != nil {
+		return nil, err
+	}
+
+	var grpcComments []*pb.Comment
+	for _, comment := range comments {
+		grpcComments = append(grpcComments, convertToGRPCComment(comment))
+	}
+
+	return &pb.FetchCommentsResponse{
+		Comments: grpcComments,
+	}, nil
+}
+
+func convertToGRPCComment(comment models.Comment) *pb.Comment {
+	var grpcReplies []*pb.Comment
+	for _, reply := range comment.Replies {
+		grpcReplies = append(grpcReplies, convertToGRPCComment(reply))
+	}
+
+	return &pb.Comment{
+		Id:              comment.ID,
+		ProblemId:       uint32(comment.ProblemID),
+		UserId:          comment.UserID,
+		Content:         comment.Content,
+		ParentCommentId: comment.ParentCommentID,
+		Replies:         grpcReplies,
+	}
 }

@@ -21,3 +21,11 @@ func (ch *ChatServiceServer) ReplyToComment(ctx context.Context, p *pb.ReplyRequ
 	}
 	return response, nil
 }
+
+func (ch *ChatServiceServer) FetchComments(ctx context.Context, p *pb.FetchCommentsRequest) (*pb.FetchCommentsResponse, error) {
+	response, err := ch.svc.GetCommentsForProblemService(ctx, p)
+	if err != nil {
+		return response, err
+	}
+	return response, nil
+}

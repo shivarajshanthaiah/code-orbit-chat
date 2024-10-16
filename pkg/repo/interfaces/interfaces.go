@@ -16,5 +16,5 @@ type MongoRepoInter interface {
 
 	AddComment(ctx context.Context, comment *models.Comment) error
 	AddReply(ctx context.Context, parentCommentID string, reply *models.Comment) error
-	GetCommentsByProblemID(ctx context.Context, problemID string) ([]models.Comment, error)
+	GetCommentsByProblemID(ctx context.Context, problemID int) ([]models.Comment, error)
 }
