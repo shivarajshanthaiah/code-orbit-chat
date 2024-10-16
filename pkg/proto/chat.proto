@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "./";
+
+service ChatService {
+    rpc Connect (stream Message) returns (stream Message);
+    rpc FetchHistory(ChatID) returns (ChatHistory);
+
+    rpc AddComment(CommentRequest) returns (CommentResponse);
+    rpc ReplyToComment(ReplyRequest) returns (CommentResponse);
+    rpc FetchComments(FetchCommentsRequest) returns (FetchCommentsResponse);
+}
+
+message FetchCommentsRequest {
+    string problem_id = 1;
+}
+
+message FetchCommentsResponse {
+    repeated Comment comments = 1;
+}
+
+message CommentRequest {
+    string problem_id = 1;
+    string user_id = 2;
+    string content = 3;
+}
+
+message ReplyRequest {
+    string comment_id = 1;
+    string user_id = 2;
+    string content = 3;
+}
+
+message CommentResponse {
+    string message = 1;
+    Comment comment = 2;
+}
+
+message Comment {
+    string id = 1;
+    string problem_id = 2;
+    string user_id = 3;
+    string content = 4;
+    string created_at = 5;
+    string parent_comment_id = 6;
+}
+
+message Message {
+    string Chat_ID = 1;
+    string User_ID = 2;
+    string Receiver_ID = 3;
+    string Content = 4; 
+    string timestamp = 5;
+}
+
+message ChatID {
+    string User_ID = 1;
+    string Receiver_ID = 2;
+}
+
+message ChatHistory {
+    repeated Message Chats = 1;
+}
