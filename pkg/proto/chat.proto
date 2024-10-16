@@ -14,7 +14,7 @@ service ChatService {
 }
 
 message FetchCommentsRequest {
-    string problem_id = 1;
+    uint32 problem_id = 1;
 }
 
 message FetchCommentsResponse {
@@ -22,7 +22,7 @@ message FetchCommentsResponse {
 }
 
 message CommentRequest {
-    string problem_id = 1;
+    uint32 problem_id = 1;
     string user_id = 2;
     string content = 3;
 }
@@ -40,7 +40,7 @@ message CommentResponse {
 
 message Comment {
     string id = 1;
-    string problem_id = 2;
+    uint32 problem_id = 2;
     string user_id = 3;
     string content = 4;
     string created_at = 5;

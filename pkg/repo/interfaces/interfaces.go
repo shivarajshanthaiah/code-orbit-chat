@@ -1,6 +1,10 @@
 package interfaces
 
-import "github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/models"
+import (
+	"context"
+
+	"github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/models"
+)
 
 type MongoRepoInter interface {
 	// StoreFriedsChat(message models.MessageReq) error
@@ -9,4 +13,8 @@ type MongoRepoInter interface {
 
 	Createchat(chat *models.Message) error
 	Findchat(userID, receiverID string) (*[]models.Message, error)
+
+	AddComment(ctx context.Context, comment *models.Comment) error
+	AddReply(ctx context.Context, parentCommentID string, reply *models.Comment) error
+	GetCommentsByProblemID(ctx context.Context, problemID string) ([]models.Comment, error)
 }
