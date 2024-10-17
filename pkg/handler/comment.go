@@ -29,3 +29,11 @@ func (ch *ChatServiceServer) FetchComments(ctx context.Context, p *pb.FetchComme
 	}
 	return response, nil
 }
+
+func (ch *ChatServiceServer) FetchUserComments(ctx context.Context, p *pb.FetchUserCommentsRequest) (*pb.FetchUserCommentsResponse, error){
+	response, err := ch.svc.GetUserCommentsService(ctx, p)
+	if err != nil{
+		return response, err
+	}
+	return response, nil
+}

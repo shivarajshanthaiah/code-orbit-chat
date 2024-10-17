@@ -2,10 +2,14 @@ package service
 
 import (
 	"context"
+	"log"
 
 	"github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/models"
 	pb "github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/proto"
+	"github.com/shivaraj-shanthaiah/code_orbit_chat/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (ch *ChatService) AddCommentService(ctx context.Context, req *pb.CommentRequest) (*pb.CommentResponse, error) {
@@ -66,7 +70,7 @@ func (ch *ChatService) GetCommentsForProblemService(ctx context.Context, req *pb
 
 	var grpcComments []*pb.Comment
 	for _, comment := range comments {
-		grpcComments = append(grpcComments, convertToGRPCComment(comment))
+		grpcComments = append(grpcComments, utils.ConvertToGRPCCommentForProblem(comment))
 	}
 
 	return &pb.FetchCommentsResponse{
@@ -74,18 +78,24 @@ func (ch *ChatService) GetCommentsForProblemService(ctx context.Context, req *pb
 	}, nil
 }
 
-func convertToGRPCComment(comment models.Comment) *pb.Comment {
-	var grpcReplies []*pb.Comment
-	for _, reply := range comment.Replies {
-		grpcReplies = append(grpcReplies, convertToGRPCComment(reply))
+func (ch *ChatService) GetUserCommentsService(ctx context.Context, req *pb.FetchUserCommentsRequest) (*pb.FetchUserCommentsResponse, error) {
+	if req.UserId == "" {
+		return nil, status.Error(codes.InvalidArgument, "user_id is required")
 	}
 
-	return &pb.Comment{
-		Id:              comment.ID,
-		ProblemId:       uint32(comment.ProblemID),
-		UserId:          comment.UserID,
-		Content:         comment.Content,
-		ParentCommentId: comment.ParentCommentID,
-		Replies:         grpcReplies,
+	comments, err := ch.Repo.GetUserComments(ctx, req.UserId)
+	if err != nil {
+		log.Printf("Error getting comments: %v", err)
+		return nil, status.Error(codes.Internal, "failed to fetch comments")
 	}
+
+	// Convert the comments to the gRPC format
+	grpcComments := make([]*pb.Comment, 0, len(comments))
+	for _, comment := range comments {
+		grpcComments = append(grpcComments, utils.ConvertToGRPCCommentForComment(comment))
+	}
+
+	return &pb.FetchUserCommentsResponse{
+		Comments: grpcComments,
+	}, nil
 }

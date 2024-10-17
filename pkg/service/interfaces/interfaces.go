@@ -16,4 +16,6 @@ type ChatServiceInter interface {
 	AddCommentService(ctx context.Context, req *pb.CommentRequest) (*pb.CommentResponse, error)
 	ReplyToCommentService(ctx context.Context, req *pb.ReplyRequest) (*pb.CommentResponse, error)
 	GetCommentsForProblemService(ctx context.Context, req *pb.FetchCommentsRequest) (*pb.FetchCommentsResponse, error)
+
+	GetUserCommentsService(ctx context.Context, req *pb.FetchUserCommentsRequest) (*pb.FetchUserCommentsResponse, error)
 }
