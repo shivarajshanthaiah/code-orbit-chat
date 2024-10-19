@@ -6,6 +6,7 @@ import (
 
 	"github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (r *MongoRepository) Createchat(chat *models.Message) error {
@@ -19,23 +20,28 @@ func (r *MongoRepository) Createchat(chat *models.Message) error {
 	return nil
 }
 
-// Findchat method finds the chat from MongoDB using user and receiver id
+
 func (r *MongoRepository) Findchat(userID, receiverID string) (*[]models.Message, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	var chat []models.Message
-	filter := bson.M{"senderId": userID, "recipientId": receiverID}
-
-	cursor, err := r.Collection.Find(ctx, filter)
+	filter := bson.M{
+		"$or": []bson.M{
+			{"senderid": userID, "recipientid": receiverID},
+			{"senderid": receiverID, "recipientid": userID},
+		},
+	}
+	opts := options.Find().SetSort(bson.D{{Key: "timestamp", Value: 1}})
+	cursor, err := r.Collection.Find(ctx, filter, opts)
 	if err != nil {
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	if err := cursor.All(ctx, &chat); err != nil {
+	var messages []models.Message
+	if err := cursor.All(ctx, &messages); err != nil {
 		return nil, err
 	}
 
-	return &chat, nil
+	return &messages, nil
 }

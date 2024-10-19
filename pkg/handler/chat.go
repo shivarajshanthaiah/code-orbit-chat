@@ -99,6 +99,32 @@ func sendToStream(csi pb.ChatService_ConnectServer, errch chan error) {
 	}
 }
 
+// func sendToStream(csi pb.ChatService_ConnectServer, errch chan error) {
+// 	for {
+// 		time.Sleep(500 * time.Millisecond)
+
+// 		messageHandleObject.mu.Lock()
+// 		if len(messageHandleObject.MQue) == 0 {
+// 			messageHandleObject.mu.Unlock()
+// 			continue
+// 		}
+
+// 		msg := messageHandleObject.MQue[0]
+// 		messageHandleObject.MQue = messageHandleObject.MQue[1:]
+// 		messageHandleObject.mu.Unlock()
+
+// 		err := csi.Send(&pb.Message{
+// 			User_ID:     msg.SenderID,
+// 			Receiver_ID: msg.RecipientID,
+// 			Content:     msg.Content,
+// 		})
+// 		if err != nil {
+// 			errch <- err
+// 			return
+// 		}
+// 	}
+// }
+
 func (ch *ChatServiceServer) FetchHistory(ctx context.Context, p *pb.ChatID) (*pb.ChatHistory, error) {
 	response, err := ch.svc.FetchChatService(p)
 	if err != nil {

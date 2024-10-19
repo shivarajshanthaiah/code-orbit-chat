@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"time"
+
 	"github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/models"
 	pb "github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/proto"
 )
@@ -17,6 +19,7 @@ func ConvertToGRPCCommentForProblem(comment models.Comment) *pb.Comment {
 		UserId:          comment.UserID,
 		Content:         comment.Content,
 		ParentCommentId: comment.ParentCommentID,
+		Timestamp:       comment.Timestamp.Format(time.RFC3339),
 		Replies:         grpcReplies,
 	}
 }
@@ -28,6 +31,7 @@ func ConvertToGRPCCommentForComment(comment models.Comment) *pb.Comment {
 		UserId:          comment.UserID,
 		Content:         comment.Content,
 		ParentCommentId: comment.ParentCommentID,
+		Timestamp:       comment.Timestamp.Format(time.RFC3339),
 	}
 
 	// Convert replies if they exist

@@ -23,9 +23,9 @@ import "time"
 // }
 
 type Message struct {
-	ID          string    `bson:"_id,omitempty"`
-	SenderID    string    `json:"senderId"`
-	RecipientID string    `json:"recipientId"`
-	Content     string    `json:"content"`
-	Timestamp   time.Time `json:"timestamp"`
+	ID          string    `bson:"_id,omitempty" json:"id,omitempty"`
+	SenderID    string    `bson:"senderid" json:"senderid"`
+	RecipientID string    `bson:"recipientid" json:"recipientid"`
+	Content     string    `bson:"content" json:"content"`
+	Timestamp   time.Time `bson:"timestamp" json:"timestamp"`
 }

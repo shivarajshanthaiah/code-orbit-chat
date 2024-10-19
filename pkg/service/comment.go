@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/models"
 	pb "github.com/shivaraj-shanthaiah/code_orbit_chat/pkg/proto"
@@ -19,6 +20,7 @@ func (ch *ChatService) AddCommentService(ctx context.Context, req *pb.CommentReq
 		UserID:          req.UserId,
 		Content:         req.Content,
 		ParentCommentID: "",
+		Timestamp:       time.Now(),
 	}
 
 	err := ch.Repo.AddComment(ctx, &comment)
@@ -34,6 +36,7 @@ func (ch *ChatService) AddCommentService(ctx context.Context, req *pb.CommentReq
 			UserId:          comment.UserID,
 			Content:         comment.Content,
 			ParentCommentId: comment.ParentCommentID,
+			Timestamp:       comment.Timestamp.Format(time.RFC3339),
 		},
 	}, nil
 }
@@ -44,6 +47,7 @@ func (ch *ChatService) ReplyToCommentService(ctx context.Context, req *pb.ReplyR
 		UserID:          req.UserId,
 		Content:         req.Content,
 		ParentCommentID: req.CommentId,
+		Timestamp:       time.Now(),
 	}
 
 	err := ch.Repo.AddReply(ctx, req.CommentId, &reply)
@@ -58,6 +62,7 @@ func (ch *ChatService) ReplyToCommentService(ctx context.Context, req *pb.ReplyR
 			UserId:          reply.UserID,
 			Content:         reply.Content,
 			ParentCommentId: reply.ParentCommentID,
+			Timestamp: reply.Timestamp.Format(time.RFC3339),
 		},
 	}, nil
 }
